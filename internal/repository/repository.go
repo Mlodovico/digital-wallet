@@ -3,19 +3,25 @@ package repository
 import (
 	"errors"
 
-	"github.com/mlodovico/digital-wallet/internal/models"
+	"github.com/mlodovico/digital-wallet/internal/entities"
 )
 
-var wallets = []models.Wallet{
-    {ID: 1, Balance: 100.0},
-    {ID: 2, Balance: 200.0},
+var cards = []entities.Card{
+    *entities.NewCard("John Doe", "4111111111111111", 100.0, 1, 2024),
+    *entities.NewCard("Jane Smith", "5500000000000004", 200.0, 6, 2023),
+    *entities.NewCard("Alice Johnson", "340000000000009", 300.0, 12, 2025),
+    *entities.NewCard("Bob Brown", "30000000000004", 400.0, 9, 2022),
 }
 
-func GetAllWallets() []models.Wallet {
+var wallets = []entities.Wallet{
+    *entities.NewWallet(1, "John Doe", cards),
+}
+
+func GetAllWallets() []entities.Wallet {
     return wallets
 }
 
-func GetWalletByID(id int) (*models.Wallet, error) {
+func GetWalletByID(id string) (*entities.Wallet, error) {
     for _, wallet := range wallets {
         if wallet.ID == id {
             return &wallet, nil
@@ -24,11 +30,11 @@ func GetWalletByID(id int) (*models.Wallet, error) {
     return nil, errors.New("wallet not found")
 }
 
-func CreateWallet(wallet models.Wallet) {
+func CreateWallet(wallet entities.Wallet) {
     wallets = append(wallets, wallet)
 }
 
-func UpdateWallet(wallet models.Wallet) error {
+func UpdateWallet(wallet entities.Wallet) error {
     for i, w := range wallets {
         if w.ID == wallet.ID {
             wallets[i] = wallet
@@ -38,7 +44,7 @@ func UpdateWallet(wallet models.Wallet) error {
     return errors.New("wallet not found")
 }
 
-func DeleteWallet(id int) error {
+func DeleteWallet(id string) error {
     for i, w := range wallets {
         if w.ID == id {
             wallets = append(wallets[:i], wallets[i+1:]...)
@@ -48,23 +54,37 @@ func DeleteWallet(id int) error {
     return errors.New("wallet not found")
 }
 
-func DepositToWallet(id int, amount float64) error {
-    wallet, err := GetWalletByID(id)
+func DepositToCard(walletId string, cardNumber string, amount float64) error {
+    wallet, err := GetWalletByID(walletId)
     if err != nil {
         return err
     }
-    wallet.Balance += amount
-    return UpdateWallet(*wallet)
+
+    for i, card := range wallet.Card {
+        if card.CardNumber == cardNumber {
+            wallet.Card[i].Balance += amount
+            return UpdateWallet(*wallet)
+        }
+    }
+
+    return errors.New("card not found")
 }
 
-func WithdrawFromWallet(id int, amount float64) error {
-    wallet, err := GetWalletByID(id)
+func WithdrawFromCard(walletId string, cardNumber string, amount float64) error {
+    wallet, err := GetWalletByID(walletId)
     if err != nil {
         return err
     }
-    if wallet.Balance < amount {
-        return errors.New("insufficient funds")
+
+    for i, card := range wallet.Card {
+        if card.CardNumber == cardNumber {
+            if card.Balance < amount {
+                return errors.New("insufficient funds")
+            }
+            wallet.Card[i].Balance -= amount
+            return UpdateWallet(*wallet)
+        }
     }
-    wallet.Balance -= amount
-    return UpdateWallet(*wallet)
+
+    return errors.New("card not found")
 }

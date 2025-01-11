@@ -8,6 +8,6 @@ import (
 )
 
 func main() {
-    http.HandleFunc("/digital-walllet", handlers.WalletHandler)
+    http.HandleFunc("/digital-wallet", handlers.WalletHandler)
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
