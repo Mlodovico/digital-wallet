@@ -1,0 +1,19 @@
+# Digital Wallet
+
+Service developed within the context of a digital wallet, offering solutions for clients such as card registration, notifications, deposits, and crediting, in addition to the registration of new wallets and cards. The project involved using Go (Golang) and incorporated aspects of clean architecture.
+
+## Table of Contents
+ - [Dependencies](#Dependencies)
+ - [Language](#Language)
+
+## Depedencies
+
+ - **Go**
+
+## Language
+
+- GoLang
+
+## License
+
+[![CC0](https://licensebuttons.net/p/zero/1.0/88x31.png)](https://creativecommons.org/publicdomain/zero/1.0/)
