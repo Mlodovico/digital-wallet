@@ -69,9 +69,9 @@ func (c *Card) IsValidCardType() bool {
 }
 
 func (c *Card) IsExpired() bool {
-    c.CurrentYear, c.CurrentMounth, _ := time.Now().Date()
+    currentYear, currentMounth, _ := time.Now().Date()
 
-    if c.ExpYear < c.CurrentYear || (c.ExpYear == c.CurrentYear && c.ExpMonth < int(c.CurrentMounth)) {
+    if c.ExpYear < currentYear || (c.ExpYear == currentYear && c.ExpMonth < int(currentMounth)) {
         return true
     }
 
