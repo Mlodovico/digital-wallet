@@ -11,8 +11,22 @@ import (
 func WalletHandler(w http.ResponseWriter, r *http.Request) {
     switch r.Method {
     case http.MethodGet:
-        wallets := repository.GetAllWallets()
-        json.NewEncoder(w).Encode(wallets)
+        id := r.URL.Query().Get("id")
+        if id != "" {
+            wallet, err := repository.GetWalletByID(id)
+            if err != nil {
+                http.Error(w, err.Error(), http.StatusNotFound)
+                return
+            }
+            json.NewEncoder(w).Encode(wallet)
+        } else {
+            wallets, err := repository.GetAllWallets()
+            if err != nil {
+                http.Error(w, err.Error(), http.StatusInternalServerError)
+                return
+            }
+            json.NewEncoder(w).Encode(wallets)
+        }
     case http.MethodPost:
         var data entities.Card
         json.NewDecoder(r.Body).Decode(&data)

@@ -1,56 +1,104 @@
 package repository
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"net/http"
 
 	"github.com/mlodovico/digital-wallet/internal/entities"
 )
 
-var cards = []entities.Card{
-    *entities.NewCard("John Doe", "4111111111111111", 100.0, 1, 2024),
-    *entities.NewCard("Jane Smith", "5500000000000004", 200.0, 6, 2023),
-    *entities.NewCard("Alice Johnson", "340000000000009", 300.0, 12, 2025),
-    *entities.NewCard("Bob Brown", "30000000000004", 400.0, 9, 2022),
-}
+var jsonServerURL = "http://localhost:3000"
 
-var wallets = []entities.Wallet{
-    *entities.NewWallet(1, "John Doe", cards),
-    *entities.NewWallet(2, "Jane Smith", cards),
-}
+func GetAllWallets() ([]entities.Wallet, error) {
+    resp, err := http.Get(jsonServerURL + "/wallets")
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
 
-func GetAllWallets() []entities.Wallet {
-    return wallets
+    if resp.StatusCode != http.StatusOK {
+        return nil, errors.New("failed to fetch wallets")
+    }
+
+    var wallets []entities.Wallet
+    if err := json.NewDecoder(resp.Body).Decode(&wallets); err != nil {
+        return nil, err
+    }
+
+    return wallets, nil
 }
 
 func GetWalletByID(id string) (*entities.Wallet, error) {
-    for _, wallet := range wallets {
-        if wallet.ID == id {
-            return &wallet, nil
-        }
+    resp, err := http.Get(jsonServerURL + "/wallets/" + id)
+    if err != nil {
+        return nil, err
     }
-    return nil, errors.New("wallet not found")
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        return nil, errors.New("wallet not found")
+    }
+
+    var wallet entities.Wallet
+    if err := json.NewDecoder(resp.Body).Decode(&wallet); err != nil {
+        return nil, err
+    }
+
+    return &wallet, nil
 }
 
 func CreateWallet(wallet entities.Wallet) {
-    wallets = append(wallets, wallet)
+    body, err := json.Marshal(wallet)
+    if err != nil {
+        return
+    }
+
+    http.Post(jsonServerURL+"/wallets", "application/json", bytes.NewBuffer(body))
 }
 
 func UpdateWallet(wallet entities.Wallet) error {
-    for i, w := range wallets {
-        if w.ID == wallet.ID {
-            wallets[i] = wallet
-            return nil
-        }
+    body, err := json.Marshal(wallet)
+    if err != nil {
+        return err
     }
-    return errors.New("wallet not found")
+
+    req, err := http.NewRequest(http.MethodPut, jsonServerURL+"/wallets", bytes.NewBuffer(body))
+    if err != nil {
+        return err
+    }
+
+    req.Header.Set("Content-Type", "application/json")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        return err
+    }
+
+    if resp.StatusCode != http.StatusOK {
+        return errors.New("wallet not found")
+    }
+
+    return nil
 }
 
 func DeleteWallet(id string) error {
-    for i, w := range wallets {
-        if w.ID == id {
-            wallets = append(wallets[:i], wallets[i+1:]...)
-            return nil
-        }
+    req, err := http.NewRequest(http.MethodDelete, jsonServerURL+"/wallets?id="+id, nil)
+    if err != nil {
+        return err
     }
-    return errors.New("wallet not found")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        return err
+    }
+
+    if resp.StatusCode != http.StatusOK {
+        return errors.New("wallet not found")
+    }
+
+    return nil
 }
