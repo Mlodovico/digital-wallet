@@ -11,9 +11,9 @@ func DepositToCard(walletId string, cardNumber string, amount float64) error {
         return err
     }
 
-    for i, card := range wallet.Card {
+    for i, card := range wallet.Cards {
         if card.CardNumber == cardNumber {
-            wallet.Card[i].Balance += amount
+            wallet.Cards[i].Balance += amount
             return UpdateWallet(*wallet)
         }
     }
@@ -27,12 +27,12 @@ func WithdrawFromCard(walletId string, cardNumber string, amount float64) error 
         return err
     }
 
-    for i, card := range wallet.Card {
+    for i, card := range wallet.Cards {
         if card.CardNumber == cardNumber {
             if card.Balance < amount {
                 return errors.New("insufficient funds")
             }
-            wallet.Card[i].Balance -= amount
+            wallet.Cards[i].Balance -= amount
             return UpdateWallet(*wallet)
         }
     }
