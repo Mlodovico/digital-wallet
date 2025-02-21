@@ -1,9 +1,12 @@
 package repository
 
 import (
+	"encoding/json"
 	"errors"
-)
+	"net/http"
 
+	"github.com/mlodovico/digital-wallet/internal/entities"
+)
 
 func DepositToCard(walletId string, cardNumber string, amount float64) error {
     wallet, err := GetWalletByID(walletId)
@@ -19,6 +22,26 @@ func DepositToCard(walletId string, cardNumber string, amount float64) error {
     }
 
     return errors.New("card not found")
+}
+
+func GetCardByID(id string) (*entities.Card, error) {
+    resp, err := http.Get(jsonServerURL + "/cards/" + id)
+    if err != nil {
+        return nil, err
+    }
+    
+    defer resp.Body.Close()
+    
+    if resp.StatusCode != http.StatusOK {
+        return nil, errors.New("card not found")
+    }
+
+    var card entities.Card
+    if err := json.NewDecoder(resp.Body).Decode(&card); err != nil {
+        return nil, err
+    }
+
+    return nil, errors.New("card not found")
 }
 
 func WithdrawFromCard(walletId string, cardNumber string, amount float64) error {
