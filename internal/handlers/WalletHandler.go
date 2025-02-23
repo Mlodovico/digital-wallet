@@ -31,7 +31,7 @@ func WalletHandler(w http.ResponseWriter, r *http.Request) {
         var data entities.Card
         json.NewDecoder(r.Body).Decode(&data)
 
-        card := entities.NewCard(data.CompletedName, data.CardNumber, data.Balance, data.ExpMonth, data.ExpYear)
+        card := entities.NewCard(data.CompletedName, data.CardNumber, data.PaymentCardType, data.Balance, data.ExpMonth, data.ExpYear)
         wallet := entities.NewWallet(1, "John Doe", []entities.Card{*card})
 
         if !card.IsCardValid() {

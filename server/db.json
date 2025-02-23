@@ -9,6 +9,7 @@
             "id": "1",
             "completed_name": "John Doe",
             "card_number": "4111111111111111",
+            "payment_card_type": "CREDIT",
             "balance": 100.0,
             "exp_month": 1,
             "exp_year": 2024
@@ -17,6 +18,7 @@
             "id": "2",
             "completed_name": "John Doe",
             "card_number": "5500000000000004",
+            "payment_card_type": "DEBIT",
             "balance": 200.0,
             "exp_month": 6,
             "exp_year": 2023
@@ -32,6 +34,7 @@
             "id": "3",
             "completed_name": "Jane Smith",
             "card_number": "340000000000009",
+            "payment_card_type": "CREDIT",
             "balance": 300.0,
             "exp_month": 12,
             "exp_year": 2025
@@ -47,6 +50,7 @@
             "id": "4",
             "completed_name": "Alice Johnson",
             "card_number": "30000000000004",
+            "payment_card_type": "MULTIPLE",
             "balance": 400.0,
             "exp_month": 9,
             "exp_year": 2022

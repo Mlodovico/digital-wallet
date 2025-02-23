@@ -11,16 +11,18 @@ type Card struct {
     ID    string    `json:"id"`
     CompletedName string `json:"completed_name"`
     CardNumber string `json:"card_number"`
+    PaymentCardType string `json:"payment_card_type"`
     Balance  float64 `json:"balance"`
     ExpMonth int `json:"exp_month"`
     ExpYear int `json:"exp_year"`
 }
 
-func NewCard(completedName string, cardNumber string, balance float64, expMonth, expYear int) *Card {
+func NewCard(completedName string, cardNumber string, PaymentCardType string, balance float64, expMonth, expYear int) *Card {
 	return &Card{
 		ID: uuid.New().String(),
 		CompletedName: completedName,
 		CardNumber: cardNumber,
+        PaymentCardType: PaymentCardType,
 		Balance: balance,
 		ExpMonth: expMonth,
 		ExpYear: expYear,
