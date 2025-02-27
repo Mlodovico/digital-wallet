@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/mlodovico/digital-wallet/internal/entities"
 	"github.com/mlodovico/digital-wallet/internal/repository"
 )
@@ -28,18 +29,31 @@ func WalletHandler(w http.ResponseWriter, r *http.Request) {
             json.NewEncoder(w).Encode(wallets)
         }
     case http.MethodPost:
-        var data entities.Card
-        json.NewDecoder(r.Body).Decode(&data)
-
-        card := entities.NewCard(data.CompletedName, data.CardNumber, data.PaymentCardType, data.Balance, data.ExpMonth, data.ExpYear)
-        wallet := entities.NewWallet(1, "John Doe", []entities.Card{*card})
-
-        if !card.IsCardValid() {
-            http.Error(w, "invalid card", http.StatusBadRequest)
+        var wallet entities.Wallet
+        if err := json.NewDecoder(r.Body).Decode(&wallet); err != nil {
+            http.Error(w, "Invalid request payload", http.StatusBadRequest)
             return
         }
 
-        repository.CreateWallet(*wallet)
+        if wallet.UserID == 0 || wallet.Name == "" || len(wallet.Cards) == 0 {
+            http.Error(w, "missing required fields", http.StatusBadRequest)
+            return
+        }
+
+        for _, card := range wallet.Cards {
+            if card.CompletedName == "" || card.CardNumber == "" || card.PaymentCardType == "" || card.Balance == 0 || card.ExpMonth == 0 || card.ExpYear == 0 {
+                http.Error(w, "missing required fields", http.StatusBadRequest)
+                return
+            }
+
+            if !card.IsCardValid() {
+                http.Error(w, "invalid card", http.StatusBadRequest)
+                return
+            }
+        }
+
+        wallet.ID = uuid.New().String()
+        repository.CreateWallet(wallet)
         w.WriteHeader(http.StatusCreated)
     case http.MethodPut:
         var data entities.Wallet

@@ -35,6 +35,7 @@ func GetWalletByID(id string) (*entities.Wallet, error) {
     if err != nil {
         return nil, err
     }
+
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
@@ -85,7 +86,7 @@ func UpdateWallet(wallet entities.Wallet) error {
 }
 
 func DeleteWallet(id string) error {
-    req, err := http.NewRequest(http.MethodDelete, jsonServerURL+"/wallets?id="+id, nil)
+    req, err := http.NewRequest(http.MethodDelete, jsonServerURL+"/wallets/"+id, nil)
     if err != nil {
         return err
     }
@@ -95,6 +96,7 @@ func DeleteWallet(id string) error {
     if err != nil {
         return err
     }
+    defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
         return errors.New("wallet not found")

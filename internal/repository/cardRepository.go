@@ -24,6 +24,17 @@ func DepositToCard(walletId string, cardNumber string, amount float64) error {
     return errors.New("card not found")
 }
 
+func CreateNewCard(walletId string, card entities.Card) error {
+    wallet, err := GetWalletByID(walletId)
+
+    if err != nil {
+        return err
+    }
+
+    wallet.Cards = append(wallet.Cards, card)
+    return UpdateWallet(*wallet)
+}
+
 func GetCardByID(id string) (*entities.Card, error) {
     resp, err := http.Get(jsonServerURL + "/cards/" + id)
     if err != nil {
