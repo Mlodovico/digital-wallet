@@ -31,15 +31,17 @@ func CardHandler(w http.ResponseWriter, r *http.Request) {
 
 		if id != "" {
 			var card entities.Card
+
 			if err := json.NewDecoder(r.Body).Decode(&card); err != nil {
 				http.Error(w, "invalid card data", http.StatusBadRequest)
 				return
 			}
 
-			createdCard := repository.CreateNewCard(id ,card)
+			createdCard := repository.CreateNewCard(id, card)
 
 			json.NewEncoder(w).Encode(createdCard)
 			json.NewEncoder(w).Encode(card)
+			return
 		} else {
 			http.Error(w, "invalid wallet id", http.StatusBadRequest)
 			return

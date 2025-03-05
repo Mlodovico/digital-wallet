@@ -31,12 +31,16 @@ func CreateNewCard(walletId string, card entities.Card) error {
         return err
     }
 
+    if wallet.Cards == nil {
+        wallet.Cards = []entities.Card{}
+    }
+
     wallet.Cards = append(wallet.Cards, card)
     return UpdateWallet(*wallet)
 }
 
 func GetCardByID(id string) (*entities.Card, error) {
-    resp, err := http.Get(jsonServerURL + "/cards/" + id)
+    resp, err := http.Get(jsonServerURL + id)
     if err != nil {
         return nil, err
     }
