@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/mlodovico/digital-wallet/internal/entities"
 )
 
@@ -24,19 +25,20 @@ func DepositToCard(walletId string, cardNumber string, amount float64) error {
     return errors.New("card not found")
 }
 
-func CreateNewCard(walletId string, card entities.Card) error {
+func CreateNewCard(walletId string, card entities.Card) {
     wallet, err := GetWalletByID(walletId)
 
     if err != nil {
-        return err
+        return
     }
 
     if wallet.Cards == nil {
         wallet.Cards = []entities.Card{}
     }
 
+    card.ID = uuid.New().String()
     wallet.Cards = append(wallet.Cards, card)
-    return UpdateWallet(*wallet)
+    return
 }
 
 func GetCardByID(id string) (*entities.Card, error) {

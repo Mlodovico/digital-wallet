@@ -37,9 +37,7 @@ func CardHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			createdCard := repository.CreateNewCard(id, card)
-
-			json.NewEncoder(w).Encode(createdCard)
+			repository.CreateNewCard(id, card)
 			json.NewEncoder(w).Encode(card)
 			return
 		} else {

@@ -65,7 +65,7 @@ func UpdateWallet(wallet entities.Wallet) error {
         return err
     }
 
-    req, err := http.NewRequest(http.MethodPut, jsonServerURL+"/wallets", bytes.NewBuffer(body))
+    req, err := http.NewRequest(http.MethodPut, jsonServerURL+"/wallets/"+wallet.ID, bytes.NewBuffer(body))
     if err != nil {
         return err
     }
@@ -77,9 +77,10 @@ func UpdateWallet(wallet entities.Wallet) error {
     if err != nil {
         return err
     }
+    defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
-        return errors.New("wallet not found")
+        return errors.New("failed to update wallet")
     }
 
     return nil
