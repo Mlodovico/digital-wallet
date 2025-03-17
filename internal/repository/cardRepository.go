@@ -72,24 +72,13 @@ func CreateNewCard(walletId string, card entities.Card) error {
     return updateWallet(*wallet)
 }
 
-func GetCardByID(id string) (*entities.Card, error) {
-    resp, err := http.Get(jsonServerURL + id)
+func GetCardByID(id string) ([]entities.Card, error) {
+    resp, err := GetWalletByID(id)
     if err != nil {
         return nil, err
     }
-    
-    defer resp.Body.Close()
-    
-    if resp.StatusCode != http.StatusOK {
-        return nil, errors.New("card not found")
-    }
 
-    var card entities.Card
-    if err := json.NewDecoder(resp.Body).Decode(&card); err != nil {
-        return nil, err
-    }
-
-    return nil, errors.New("card not found")
+    return resp.Cards, nil
 }
 
 func WithdrawFromCard(walletId string, cardNumber string, amount float64) error {

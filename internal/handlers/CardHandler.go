@@ -16,6 +16,7 @@ func CardHandler(w http.ResponseWriter, r *http.Request) {
 
 		if id != "" {
 			card, err := repository.GetCardByID(id)
+
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusNotFound)
 				return
