@@ -81,6 +81,28 @@ func GetCardByID(id string) ([]entities.Card, error) {
     return resp.Cards, nil
 }
 
+func DeleteCard(id string) error {
+    req, err := http.NewRequest(http.MethodDelete, jsonServerURL + "/cards/" + id, nil)
+
+    if err != nil {
+        return err
+    }
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        return err
+    }
+
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        return errors.New("card not found")
+    }
+
+    return nil
+}
+
 func WithdrawFromCard(walletId string, cardNumber string, amount float64) error {
     wallet, err := GetWalletByID(walletId)
     if err != nil {
