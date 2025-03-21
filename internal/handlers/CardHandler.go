@@ -82,7 +82,8 @@ func CardHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusNoContent)
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("card deleted with success"))
 		} else {
 			http.Error(w, "invalid card number", http.StatusBadRequest)
 			return
