@@ -81,26 +81,21 @@ func GetCardByID(id string) ([]entities.Card, error) {
     return resp.Cards, nil
 }
 
-func DeleteCard(id string) error {
-    req, err := http.NewRequest(http.MethodDelete, jsonServerURL + "/cards/" + id, nil)
-
+func DeleteCard(walletID string, cardID string) error {
+    wallet, err := GetWalletByID(walletID)
     if err != nil {
         return err
     }
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        return err
+    for i, card := range wallet.Cards {
+        if card.ID == cardID {
+            // Remove the card from the slice
+            wallet.Cards = append(wallet.Cards[:i], wallet.Cards[i+1:]...)
+            return UpdateWallet(*wallet)
+        }
     }
 
-    defer resp.Body.Close()
-
-    if resp.StatusCode != http.StatusOK {
-        return errors.New("card not found")
-    }
-
-    return nil
+    return errors.New("card not found")
 }
 
 func WithdrawFromCard(walletId string, cardNumber string, amount float64) error {

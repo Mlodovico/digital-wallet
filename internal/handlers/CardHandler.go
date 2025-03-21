@@ -71,10 +71,11 @@ func CardHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPut:
 		// update card
 	case http.MethodDelete:
-		id := r.URL.Query().Get("id")
+		cardID := r.URL.Query().Get("card-id")
+		walletID := r.URL.Query().Get("wallet-id")
 
-		if id != "" {
-			err := repository.DeleteCard(id)
+		if cardID != "" && walletID != "" {
+			err := repository.DeleteCard(walletID, cardID)
 
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusNotFound)
