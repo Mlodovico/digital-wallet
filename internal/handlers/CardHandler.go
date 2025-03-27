@@ -69,7 +69,31 @@ func CardHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case http.MethodPut:
-		// update card
+		walletId := r.URL.Query().Get("wallet-id")
+		cardId := r.URL.Query().Get("card-id")
+
+		if walletId != "" && cardId != "" {
+			var udpatedCard entities.Card
+			
+			if err := json.NewDecoder(r.Body).Decode(&udpatedCard); err != nil {
+				http.Error(w, "invalid card data", http.StatusBadRequest)
+				return
+			}
+
+			updatedCard.ID = cardId
+
+			err := repository.UpdateCard(walletId, updatedCard)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("card updated with success"))
+		} else {
+			http.Error(w, "invalid wallet or card id", http.StatusBadRequest)
+			return
+		}
 	case http.MethodDelete:
 		cardID := r.URL.Query().Get("card-id")
 		walletID := r.URL.Query().Get("wallet-id")

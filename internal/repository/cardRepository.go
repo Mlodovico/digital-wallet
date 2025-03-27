@@ -56,6 +56,31 @@ func updateWallet(wallet entities.Wallet) error {
     return nil
 }
 
+func UpdateCard(walletId string, updatedCard entities.Card) error {
+    wallet, err := GetWalletByID(walletId)
+    
+    if err != nil {
+        return err
+    }
+
+    for i, card := range wallet.Cards {
+        if card.ID == updatedCard.ID {
+             // Update the card fields
+             wallet.Cards[i].CompletedName = updatedCard.CompletedName
+             wallet.Cards[i].CardNumber = updatedCard.CardNumber
+             wallet.Cards[i].PaymentCardType = updatedCard.PaymentCardType
+             wallet.Cards[i].Balance = updatedCard.Balance
+             wallet.Cards[i].ExpMonth = updatedCard.ExpMonth
+             wallet.Cards[i].ExpYear = updatedCard.ExpYear
+ 
+             // Save the updated wallet
+             return UpdateWallet(*wallet)
+         }
+    }
+
+    return errors.New("card not found")
+}
+
 func CreateNewCard(walletId string, card entities.Card) error {
     wallet, err := GetWalletByID(walletId)
 
