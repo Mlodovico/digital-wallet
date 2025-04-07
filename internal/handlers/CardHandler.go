@@ -73,9 +73,9 @@ func CardHandler(w http.ResponseWriter, r *http.Request) {
 		cardId := r.URL.Query().Get("card-id")
 
 		if walletId != "" && cardId != "" {
-			var udpatedCard entities.Card
+			var updatedCard entities.Card
 			
-			if err := json.NewDecoder(r.Body).Decode(&udpatedCard); err != nil {
+			if err := json.NewDecoder(r.Body).Decode(&updatedCard); err != nil {
 				http.Error(w, "invalid card data", http.StatusBadRequest)
 				return
 			}
