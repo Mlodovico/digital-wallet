@@ -35,7 +35,7 @@ func WalletHandler(w http.ResponseWriter, r *http.Request) {
             return
         }
 
-        if wallet.UserID == 0 || wallet.Name == "" || len(wallet.Cards) == 0 {
+        if wallet.UserID == 0 || wallet.Name == "" || wallet.DocumentID == "" || len(wallet.Cards) == 0 {
             http.Error(w, "missing required fields", http.StatusBadRequest)
             return
         }

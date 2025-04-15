@@ -27,13 +27,15 @@ func NewWallet(userID int, name string, documentId string, birthDate time.Time, 
 }
 
 func (w *Wallet) IsDocumentIDValid() bool {
-    if (len(w.DocumentID ) < 1) {
+    if (len(w.DocumentID) < 1) {
         return false
     }
+
     for _, char := range w.DocumentID {
         if char < '0' || char > '9' {
             return false
         }
     }
+
     return true
 }
